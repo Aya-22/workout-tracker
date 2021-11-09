@@ -3,19 +3,20 @@ const Workout = require("../models/workout.js");
 
 // this function the total duration of each workout from the past seven workouts on the stats page.  $addFields
 router.get("/api/workout/duration", (req, res) => {
-  db.Workout.aggregate( [
+  Workout.aggregate( [
     {
       $addFields: {
         totalDuration: { $sum: exercise.duration }
-      },
-    }
+      }
+  }
 
     .then(dbWorkout => {
       res.json(dbWorkout);
     })
     .catch(err => {
       res.status(400).json(err);
-    });
+    }),
+  ]);
 });
 
 

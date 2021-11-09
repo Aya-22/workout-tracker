@@ -1,35 +1,25 @@
 const router = require("express").Router();
-const Transaction = require("../models/transaction.js");
+const path = require("path");
+// const Exercise = require("../public/exercise.html");
+// const indexHtml = require("../public/index.html");
+// const Stats = require("../public/stats.html");
 
-router.post("/api/transaction", ({ body }, res) => {
-  Transaction.create(body)
-    .then(dbTransaction => {
-      res.json(dbTransaction);
-    })
-    .catch(err => {
-      res.status(400).json(err);
+
+module.exports = (app) => {
+    // => HTML GET Requests
+    // Below code handles when users "visit" a page.
+    // In each of the below cases the user is shown an HTML page of content
+  
+    app.get('/', (req, res) => {
+      res.sendFile(path.join(__dirname, '../public/index.html'));
     });
-});
-
-router.post("/api/transaction/bulk", ({ body }, res) => {
-  Transaction.insertMany(body)
-    .then(dbTransaction => {
-      res.json(dbTransaction);
-    })
-    .catch(err => {
-      res.status(400).json(err);
+  
+    app.get('/exercise', (req, res) => {
+      res.sendFile(path.join(__dirname, '../public/exercise.html'));
     });
-});
-
-router.get("/api/transaction", (req, res) => {
-  Transaction.find({})
-    .sort({ date: -1 })
-    .then(dbTransaction => {
-      res.json(dbTransaction);
-    })
-    .catch(err => {
-      res.status(400).json(err);
+  
+    // If no matching route is found default to home
+    app.get('/stats', (req, res) => {
+      res.sendFile(path.join(__dirname, '../public/stats.html'));
     });
-});
-
-module.exports = router;
+  };
