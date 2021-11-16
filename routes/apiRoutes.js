@@ -1,18 +1,20 @@
 const router = require("express").Router();
 const Workout = require("../models/Workout.js");
 const mongoose = require('mongoose');
+const db = require("../models");
 
 // this function the total duration of each workout from the past seven workouts on the stats page.  $addFields
 router.get("/api/workout/duration", (req, res) => {
-  Workout.aggregate( [
+  db.Workout.aggregate([
     {
       $addFields: {
         totalDuration: { $sum: exercise.duration }
       }
-    }]);
+    }])
+    .limit(7)
 
-    .then(res => {
-      res.json(res);
+    .then(dbWorkout => {
+      res.json(dbWorkout);
     })
     .catch(err => {
       res.status(400).json(err);
@@ -21,7 +23,7 @@ router.get("/api/workout/duration", (req, res) => {
 });
 
 router.post("/api/workout", ({ body }, res) => {
-    Workout.create(body)
+    db.Workout.create(body)
       .then(dbWorkout => {
         res.json(dbWorkout);
       })
@@ -32,8 +34,11 @@ router.post("/api/workout", ({ body }, res) => {
 
 
 router.put("/api/workout/:id", ({ body }, res) => {
-  Workout.findByIdAndUpdate(body)
-    .then(dbWorkout => {
+  db.Workout.findByIdAndUpdate(
+  { _id: body.id },
+  { exercise: body.exercise},
+)
+  .then(dbWorkout => {
       res.json(dbWorkout);
     })
     .catch(err => {
@@ -43,7 +48,7 @@ router.put("/api/workout/:id", ({ body }, res) => {
 
 // 
 router.get("/api/workout/weight", (req, res) => {
-  Workout.find({})
+  db.Workout.find({})
     .sort({ date: -1 })
     .then(dbWorkout => {
       res.json(dbWorkout);
